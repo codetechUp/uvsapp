@@ -93,7 +93,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Color(0xFFFCFEFF),
-      body: SafeArea(
+      body: SafeArea(    
         child: Container(
           width: double.infinity,
           height: double.infinity,
