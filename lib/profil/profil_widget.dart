@@ -151,7 +151,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                     Padding(
                       padding: EdgeInsets.fromLTRB(24, 12, 0, 12),
                       child: Text(
-                        'Profil',
+                        'Mon Profil',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.bold,
