@@ -2,12 +2,14 @@ import '../flutter_flow/flutter_flow_animations.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../requete/requete_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfilWidget extends StatefulWidget {
-  ProfilWidget({Key key}) : super(key: key);
-
+  
+var user;
+  ProfilWidget({this.user});
   @override
   _ProfilWidgetState createState() => _ProfilWidgetState();
 }
@@ -54,6 +56,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       key: scaffoldKey,
       body: SafeArea(
@@ -67,7 +70,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                   width: MediaQuery.of(context).size.width,
                   height: 270,
                   decoration: BoxDecoration(
-                    color: FlutterFlowTheme.primaryColor,
+                    color: Color(0xFFF7981A),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -110,7 +113,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                             child: Text(
-                              'Abdou Samb',
+                              widget.user["prenom"]+ " "+widget.user["nom"],
                               style: FlutterFlowTheme.title1.override(
                                 fontFamily: 'Poppins',
                                 color: Colors.white,
@@ -127,7 +130,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
                             child: Text(
-                              'Master 2 Maths Informatique',
+                              "Étudiant en "+widget.user["programme"]["intitule"],
                               style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Poppins',
                                 color: Colors.white,
@@ -151,7 +154,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                     Padding(
                       padding: EdgeInsets.fromLTRB(24, 12, 0, 12),
                       child: Text(
-                        'Mon Profil',
+                        'Profil',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.bold,
@@ -216,29 +219,39 @@ class _ProfilWidgetState extends State<ProfilWidget>
                             color: Colors.white,
                             shape: BoxShape.rectangle,
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
-                                child: Text(
-                                  'Faire une requete',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
+                          child: InkWell(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RequeteWidget(),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+                                  child: Text(
+                                    'Faire une requete',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment(0.9, 0),
-                                  child: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Color(0xFF95A1AC),
-                                    size: 18,
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment(0.9, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xFF95A1AC),
+                                      size: 18,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
                         )
                       ],

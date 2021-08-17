@@ -6,6 +6,16 @@ import '../profil/profil_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:http/http.dart' as http;
+//Permet de stocker les infos du token comme localStorage
+import 'package:shared_preferences/shared_preferences.dart';
+
+//Permet de decoder le token
+import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'dart:convert';
+//Permet de convertir du json avec decode\encode
+import 'package:http_interceptor/http_interceptor.dart';
+import '../helpers/interceptor.dart';
 
 class LoginWidget extends StatefulWidget {
   LoginWidget({Key key}) : super(key: key);
@@ -16,6 +26,8 @@ class LoginWidget extends StatefulWidget {
 
 class _LoginWidgetState extends State<LoginWidget>
     with TickerProviderStateMixin {
+      bool error=false;
+      String errors='nothing';
   TextEditingController textController1;
   TextEditingController textController2;
   bool passwordVisibility;
@@ -91,7 +103,7 @@ class _LoginWidgetState extends State<LoginWidget>
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                   child: Text(
                     'Authentification',
                     textAlign: TextAlign.center,
@@ -103,6 +115,20 @@ class _LoginWidgetState extends State<LoginWidget>
                     ),
                   ).animated([animationsMap['textOnPageLoadAnimation']]),
                 ),
+
+                error ? Padding(
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                  child: Text(
+                    this.errors ,
+                    textAlign: TextAlign.center,
+                    style: FlutterFlowTheme.title2.override(
+                      fontFamily: 'Lato',
+                      color: Colors.red,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ).animated([animationsMap['textOnPageLoadAnimation']]),
+                ): Container(),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Container(
@@ -112,7 +138,7 @@ class _LoginWidgetState extends State<LoginWidget>
                     child: Align(
                       alignment: Alignment(0, 0),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(0, 45, 0, 0),
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -136,24 +162,14 @@ class _LoginWidgetState extends State<LoginWidget>
                                       color: Color(0x00000000),
                                       width: 1,
                                     ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(25),
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    ),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1,
                                     ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(25),
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    ),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   filled: true,
                                   prefixIcon: Icon(
@@ -175,7 +191,7 @@ class _LoginWidgetState extends State<LoginWidget>
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
                               child: TextFormField(
                                 controller: textController2,
                                 obscureText: !passwordVisibility,
@@ -193,24 +209,14 @@ class _LoginWidgetState extends State<LoginWidget>
                                       color: Color(0x00000000),
                                       width: 1,
                                     ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(25),
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    ),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color(0x00000000),
                                       width: 1,
                                     ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(25),
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    ),
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   filled: true,
                                   prefixIcon: Icon(
@@ -246,7 +252,8 @@ class _LoginWidgetState extends State<LoginWidget>
                             ),
                             FFButtonWidget(
                               onPressed: () async {
-                                await Navigator.pushAndRemoveUntil(
+                                login(textController1.text,textController2.text);
+                             /*   await Navigator.pushAndRemoveUntil(
                                   context,
                                   PageTransition(
                                     type: PageTransitionType.fade,
@@ -256,7 +263,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                     child: ProfilWidget(),
                                   ),
                                   (r) => false,
-                                );
+                                );*/
                               },
                               text: 'Se Connecter',
                               options: FFButtonOptions(
@@ -310,4 +317,84 @@ class _LoginWidgetState extends State<LoginWidget>
       ),
     );
   }
+
+
+
+
+
+   login(username,password) async{
+
+
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(username);
+    print(password);
+    String url = "http://fyhoqst6mapi.uvs.sn/api/login";
+    var body={ 
+      "email": username,
+      "password": password
+    };
+
+
+  var res= await http.post(Uri.parse(url),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+
+        },
+        body: json.encode(body)
+    );
+    print(res.statusCode);
+    print(res.body);
+  if(res.statusCode>=200 && res.statusCode < 400 ){
+        
+      var token=json.decode(res.body)['access_token'];
+     
+      prefs.setString('token', token);
+       print(token);
+      var etudiantId=json.decode(res.body)['etudiant_id'];
+      prefs.setInt('etudiantId', etudiantId);
+      //On utilise l interceptor pour ajouter le token et faire la requete
+ var result = await InterceptedHttp.build(
+        interceptors: [ Interceptor() ])
+        .get(Uri.parse("http://fyhoqst6mapi.uvs.sn/api/etudiants/"+etudiantId.toString()));
+   var user = json.decode(result.body);
+
+   print(result.body);
+     await Navigator.pushAndRemoveUntil(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.fade,
+                                    duration: Duration(milliseconds: 300),
+                                    reverseDuration:
+                                        Duration(milliseconds: 300),
+                                    child: ProfilWidget(user:user),
+                                  ),
+                                  (r) => false,
+                                );
+
+
+
+
+    /*  //DECODAGE DU TOKEN
+      final String token =this.token;
+      final parts = token.split('.');
+      final payload = parts[1];
+      final String decoded = B64urlEncRfc7515.decodeUtf8(payload);
+
+      var tok =json.decode(decoded);
+      prefs.setString('role', tok["roles"][0]);
+      prefs.setInt('id', tok["id"] );*/
+      //var id= tok['id'];
+    
+    }else{
+      
+      setState((){
+        error=true;
+        errors=json.decode(res.body)["error"];
+      }) ;
+      
+    }
+    
+   }
 }
