@@ -3,6 +3,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../requete/requete_widget.dart';
+import '../login/login_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -130,7 +131,7 @@ class _ProfilWidgetState extends State<ProfilWidget>
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
                             child: Text(
-                              "Étudiant en "+widget.user["programme"]["intitule"],
+                              "Étudiant "+widget.user["programme"]["intitule"].substring(0,14),
                               style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Poppins',
                                 color: Colors.white,
@@ -344,8 +345,14 @@ class _ProfilWidgetState extends State<ProfilWidget>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
+                          onPressed: () async {
+          
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginWidget(),
+                                ),
+                              );
                           },
                           text: 'Se deconnecter',
                           options: FFButtonOptions(

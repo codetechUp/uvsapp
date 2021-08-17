@@ -133,12 +133,12 @@ class _LoginWidgetState extends State<LoginWidget>
                   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Container(
                     width: double.infinity,
-                    height: 356,
+                    height: 325,
                     decoration: BoxDecoration(),
                     child: Align(
                       alignment: Alignment(0, 0),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -191,7 +191,7 @@ class _LoginWidgetState extends State<LoginWidget>
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
+                              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: TextFormField(
                                 controller: textController2,
                                 obscureText: !passwordVisibility,
