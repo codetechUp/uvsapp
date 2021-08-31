@@ -9,6 +9,18 @@ import 'bourse_request_widget.dart';
 import 'operateur_request_widget.dart';
 import 'program_request_widget.dart';
 import 'attrib_request_widget.dart';
+//Permet de stocker les infos du token comme localStorage
+import 'package:shared_preferences/shared_preferences.dart';
+
+//Permet de decoder le token
+import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'dart:convert';
+//Permet de convertir du json avec decode\encode
+import 'package:http_interceptor/http_interceptor.dart';
+import '../helpers/interceptor.dart';
+import 'package:http/http.dart' as http;
+import 'dart:core';
+import '../classes/eno.dart';
 
 class RequestFormWidget extends StatefulWidget {
   RequestFormWidget({Key key}) : super(key: key);
@@ -19,6 +31,17 @@ class RequestFormWidget extends StatefulWidget {
 
 class _RequestFormWidgetState extends State<RequestFormWidget> {
   String dropDownValue;
+  int id;
+    List data = List();
+    String _mySelection;
+
+   
+  @override
+  void initState()  { 
+    super.initState();
+    this.getAllRequest();
+   
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,97 +71,48 @@ class _RequestFormWidgetState extends State<RequestFormWidget> {
             height: 50,
             decoration: BoxDecoration(),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: FlutterFlowDropDown(
-                options: ['Type de requete', 'Bourse', 'Changement d\'eno','Changement de cohorte','Changement d\'operateur','Changement de programme','Convention Stage','Forfait non positionné','Lettre de recommandation','Lettre de recupperration SIM','Nouvelle Attribution de cle/Modem'],
-                onChanged: (value) {
-                  setState(() => dropDownValue = value);
-                  
-                },
-                width: 130,
-                height: 40,
-                textStyle: FlutterFlowTheme.bodyText1.override(
-                  fontFamily: 'Poppins',
-                  color: FlutterFlowTheme.tertiaryColor,
-                ),
-                icon: Icon(
-                  Icons.arrow_drop_down_circle,
-                  color: FlutterFlowTheme.tertiaryColor,
-                  size: 30,
-                ),
-                fillColor: Color(0xFFF7981A),
-                elevation: 2,
-                borderColor: FlutterFlowTheme.tertiaryColor,
-                borderWidth: 2,
-                borderRadius: 0,
-                margin: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                hidesUnderline: true,
-              ),
-            ),
+              padding: EdgeInsets.fromLTRB(2, 10, 2, 10),
+              child:new DropdownButton(
+                hint: Text("Select"),
+                value:_mySelection,
+              items: data.map((item) {
+            return DropdownMenuItem(
+              child: Text(item['type']),
+              value: item['id'].toString(),
+            );
+          }).toList(),
+          onChanged: (newVal) {
+            
+            setState(() {
+              _mySelection = newVal;
+              dropDownValue=newVal;
+            });
+          },
+          
+        ),
+          ),
           ),
           getForm(dropDownValue),
-          Container(
-            width: double.infinity,
-            height: 50,
-            decoration: BoxDecoration(),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FFButtonWidget(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  },
-                  text: 'Retour',
-                  options: FFButtonOptions(
-                    width: 130,
-                    height: 40,
-                    color: FlutterFlowTheme.tertiaryColor,
-                    textStyle: FlutterFlowTheme.subtitle2.override(
-                      fontFamily: 'Poppins',
-                      color: Color(0xFF1E2428),
-                    ),
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: 12,
-                  ),
-                ),
-                FFButtonWidget(
-                  onPressed: () {
-                    print('Button pressed ...');
-                  },
-                  text: 'Envoyer',
-                  options: FFButtonOptions(
-                    width: 130,
-                    height: 40,
-                    color: Color(0xFFF7981A),
-                    textStyle: FlutterFlowTheme.subtitle2.override(
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
-                    ),
-                    borderSide: BorderSide(
-                      color: FlutterFlowTheme.tertiaryColor,
-                      width: 1,
-                    ),
-                    borderRadius: 12,
-                  ),
-                )
-              ],
-            ),
-          )
+         
         ],
       ),
     );
   }
  Widget getForm(dropDownValue){
-    if(dropDownValue == 'Changement d\'eno'){
-      return EnoRequestWidget();
+   for(var item in data){
+    
+     if(item["id"].toString() == dropDownValue){
+       print('true');
+       dropDownValue=item['type'];
+       id=item['id'];
+     }
+   }
+    if(dropDownValue == 'Changement d\'ENO'){
+      return EnoRequestWidget(id:id);
     }else if(dropDownValue == 'Bourse')
     {
       return BourseRequestWidget();
-    }else if(dropDownValue == 'Changement d\'operateur')
+    }else if(dropDownValue == 'Changement d\'opérateur')
     {
       return OperateurRequestWidget();
     }else if(dropDownValue == 'Changement de programme')
@@ -153,5 +127,28 @@ class _RequestFormWidgetState extends State<RequestFormWidget> {
     else{
       return Container();
     }
+  }
+getAllRequest() async {
+var res= await http.get(Uri.parse("http://fyhoqst6mapi.uvs.sn/api/types-requetes"),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+
+        }
+      
+    );
+    var jsonData= json.decode(res.body);
+    setState((){ data= jsonData; });
+
+  /* var jsonData= json.decode(res.body);
+    List<Eno> Request = [];
+
+ for (var u in jsonData) {
+   Eno eno = Eno(u["type"],u["id"]);
+   Request.add(eno);
+ }
+ print(Request);*/
+ 
+    
   }
 }
