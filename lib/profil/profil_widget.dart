@@ -181,30 +181,40 @@ class _ProfilWidgetState extends State<ProfilWidget>
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
-                              child: Text(
-                                'Mon profil',
-                                style: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Poppins',
+                        child: InkWell(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserPageWidget(user:widget.user),
                                 ),
-                              ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+                                  child: Text(
+                                    'Profil',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment(0.9, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xFF95A1AC),
+                                      size: 18,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment(0.9, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Color(0xFF95A1AC),
-                                  size: 18,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
                       )
                     ],
                   ),

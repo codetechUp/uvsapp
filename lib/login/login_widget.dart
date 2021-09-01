@@ -331,7 +331,7 @@ await Navigator.pushAndRemoveUntil(
                                     duration: Duration(milliseconds: 300),
                                     reverseDuration:
                                         Duration(milliseconds: 300),
-                                    child: UserPageWidget(user:user),
+                                    child: ProfilWidget(user:user),
                                   ),
                                   (r) => false,
                                 );
