@@ -115,7 +115,7 @@ class _RequestFormWidgetState extends State<RequestFormWidget> {
     }else if(dropDownValue == 'Changement d\'opérateur')
     {
       return OperateurRequestWidget();
-    }else if(dropDownValue == 'Changement de programme')
+    }else if(dropDownValue == 'Changement de filière')
     {
       return ProgramRequestWidget();
     }

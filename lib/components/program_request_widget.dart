@@ -151,4 +151,86 @@ class _ProgramRequestWidgetState extends State<ProgramRequestWidget> {
       ),
     );
   }
+
+
+
+
+  getUser() async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+   var etudiantId  =prefs.getInt('etudiantId',);
+ var result = await InterceptedHttp.build(
+        interceptors: [ Interceptor() ])
+        .get(Uri.parse("http://fyhoqst6mapi.uvs.sn/api/etudiants/"+etudiantId.toString()));
+   var user = json.decode(result.body);
+   print(user);
+setState((){
+  anVal=user['_eno']['id'];
+  myEno=user['_eno']['lieu'];
+});
+
+
+  }
+   addRequest(type,anVal,newVal,raison) async {
+ SharedPreferences prefs = await SharedPreferences.getInstance();
+   var etudiantId  =prefs.getInt('etudiantId'); 
+    String url = "http://fyhoqst6mapi.uvs.sn/api/etudiants/"+etudiantId.toString()+"/requetes";
+    var body={
+    "type":type,
+    "ancienne_valeur":anVal,
+    "nouvelle_valeur":newVal,
+    "raisons":raison
+};
+
+print(body);
+
+var res=await InterceptedHttp.build(
+        interceptors: [ Interceptor() ]).post(Uri.parse(url),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+
+        },
+        body: json.encode(body)
+    );
+    print(res.statusCode);
+    print(res.body);
+   
+  if(res.statusCode>=200 && res.statusCode < 400 ){
+     
+ SweetAlert.show(context,
+                      subtitle: "Succés",
+                      style: SweetAlertStyle.success,
+                       onPress: (bool isConfirm) {
+                    if(isConfirm)  {
+                       Navigator.pushAndRemoveUntil(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.fade,
+                                    duration: Duration(milliseconds: 300),
+                                    reverseDuration:
+                                        Duration(milliseconds: 300),
+                                    child: RequeteWidget(),
+                                  ),
+                                  (r) => false,
+                                );
+  
+                    // return false to keep dialog
+                    return false;
+                  }});
+    /* await Navigator.pushAndRemoveUntil(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.fade,
+                                    duration: Duration(milliseconds: 300),
+                                    reverseDuration:
+                                        Duration(milliseconds: 300),
+                                    child: ProfilWidget(user:user),
+                                  ),
+                                  (r) => false,
+                                );*/
+  }else{
+   SweetAlert.show(context,subtitle: "Erreurnu", style: SweetAlertStyle.error);
+
+  }
+  }
 }
